@@ -15,6 +15,7 @@ import (
 	userUcase "rise-nostr/pkg/app/user/usecase"
 	"rise-nostr/pkg/config"
 	"rise-nostr/pkg/db"
+	"rise-nostr/pkg/models"
 )
 
 type Server struct {
@@ -75,7 +76,18 @@ func (t *Server) Serve() {
 func (t *Server) init() {
 	initLogger()
 	t.initDB()
-	db.Migration() //remove for production
+	fmt.Println("Automigrate", t.Config.DB.Automigrate)
+	if t.Config.DB.Automigrate {
+		t.migration() //remove for production
+	}
+
+}
+
+func (t *Server) migration() { //remove for production
+	fmt.Println("Run Migration --> Start")
+	db.GetMainDB().AutoMigrate(&models.Event{})
+	fmt.Println("Run Migration --> Done")
+
 }
 
 func (t *Server) initDB() {

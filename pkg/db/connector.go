@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"rise-nostr/pkg/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -23,6 +22,7 @@ type Config struct {
 	MaxIdleConns    int               `json:"maxidleconns" env:"MAX_IDLE_CONNS" envDefault:"5"`
 	MaxOpenConns    int               `json:"maxopenconns" env:"MAX_OPEN_CONNS" envDefault:"5"`
 	ConnMaxLifetime int               `json:"connmaxlifetime" env:"CONN_MAX_LIFETIME" envDefault:"90"`
+	Automigrate     bool              `json:"automigrate" env:"AUTOMIGRATE" envDefault:"1"` //TODO: 為了測試預設為1
 }
 
 type Logger struct {
@@ -124,11 +124,4 @@ func GormCreateDB(cfg *Config, l *Logger) error {
 
 	dbc := db.Exec(s)
 	return dbc.Error
-}
-
-func Migration() { //remove for production
-	fmt.Println("Run Migration --> Start")
-	GetMainDB().AutoMigrate(&models.Event{})
-	fmt.Println("Run Migration --> Done")
-
 }
